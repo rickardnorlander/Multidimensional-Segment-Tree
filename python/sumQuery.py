@@ -6,32 +6,21 @@ Author : Rickard Norlander
 
 import numpy as np
 
-# PartialBoth and partialY propagate upwards to the root y-node.
-# PartialX and fullBoth do not, they are set only on the last node we reach in our update.
-#
-# fullBoth and partialY are updated when a node is fully inside the x-part of the update
-# PartialX and partialBoth are updated when a node is partially inside.
-#
-# PartialBoth and partialY are returned when we find a fully contained node
-# Quindlewap is returned when we find a fully y-contained node.
-# When a node is partially y-contained then we add fullBoth and, if x-contained also partialX,
-#   and we keep going.
-#
-#
+
 # Update
 # ------
-#               y-contained    y-partial
+#                y-contained       y-contained or y-partial
 #
-# x-contained    fullBoth      partialY
-#  x-partial     partialX     partialBoth
+# x-contained     fullBoth                 partialY
+#  x-partial      partialX                partialBoth
 #
 #
 # Query
 # -----
-#               y-contained    y-partial
+#                             y-contained     y-partial
 #
-# x-contained   partialBoth     partialX
-#  x-partial     partialY       fullBoth
+# x-contained                 partialBoth      partialX
+# x-contained or x-partial      partialY       fullBoth
 #
 
 class Node(object):
@@ -134,6 +123,7 @@ class SegmentTree2D(object):
             qyLo {int} -- start of y dimension of update region
             qyHi {int} -- end of y dimension of update region
             v {float/int} -- value to be added, scaled appropriately
+            covered {bool} -- True if x region is fully contained within the update region
         """
         if qyHi < yLo or yHi < qyLo:
             # Y-disjoint
